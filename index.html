@@ -270,13 +270,45 @@
         <span class="col-label">Discipline</span>
         <span class="col-value">Architecture · Interior · Urban</span>
       </div>
-      <div class="footer-col" style="align-items: flex-end;">
+      <div class="footer-col" style="align-items: flex-end;" id="contact-col">
         <span class="col-label">Contact</span>
-        <a class="col-link" href="mailto:info@blenderdesignstudio.com">
+        <a class="col-link" id="contact-email" href="mailto:info@blenderdesignstudio.com">
           info@blenderdesignstudio.com
         </a>
+        <span class="col-value" id="contact-phone" style="display:none;"></span>
+        <span class="col-value" id="contact-social" style="display:none;"></span>
       </div>
     </footer>
+
+    <script>
+      (async function() {
+        try {
+          var res = await fetch('/api/contact-info');
+          if (!res.ok) return;
+          var d = await res.json();
+          if (d.email) {
+            var el = document.getElementById('contact-email');
+            el.href = 'mailto:' + d.email;
+            el.textContent = d.email;
+          }
+          if (d.phone) {
+            var ph = document.getElementById('contact-phone');
+            ph.textContent = d.phone;
+            ph.style.display = '';
+          }
+          var links = [];
+          if (d.instagram) links.push('<a class="col-link" href="' + d.instagram + '" target="_blank">Instagram</a>');
+          if (d.twitter) links.push('<a class="col-link" href="' + d.twitter + '" target="_blank">X</a>');
+          if (d.linkedin) links.push('<a class="col-link" href="' + d.linkedin + '" target="_blank">LinkedIn</a>');
+          if (d.whatsapp) links.push('<a class="col-link" href="https://wa.me/' + d.whatsapp.replace(/[^0-9]/g,'') + '" target="_blank">WhatsApp</a>');
+          if (links.length) {
+            var sc = document.getElementById('contact-social');
+            sc.innerHTML = links.join(' · ');
+            sc.style.display = '';
+          }
+        } catch(e) {}
+      })();
+    </script>
   </div>
 </body>
 </html>
